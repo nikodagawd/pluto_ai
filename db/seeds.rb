@@ -2,6 +2,12 @@
 # development, test). The code here should be idempotent so that it can be executed at any point in every environment.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
+user = User.find_or_create_by!(email: "dev@example.com") do |u|
+  u.username = "pluto"
+  u.password = "password"
+  u.password_confirmation = "password"
+end
+
 puts "Seeding 50 sample companies..."
 
 companies_data = [
