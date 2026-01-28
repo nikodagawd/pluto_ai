@@ -1,0 +1,54 @@
+<div class="min-h-screen bg-gray-50 px-4">
+  <div class="mx-auto flex max-w-7xl items-center justify-center py-16">
+    <div class="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
+
+      <div class="mb-8">
+        <h1 class="text-2xl font-bold text-gray-900">Get started</h1>
+        <p class="mt-2 text-sm text-gray-600">
+          Create your account to start using <span class="font-semibold">pluto.ai</span>.
+        </p>
+      </div>
+
+      <form class="space-y-5">
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">
+            Full name
+          </label>
+          <input type="text"
+                 placeholder="Firstname Lastname"
+                 class="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">
+            Email address
+          </label>
+          <input type="email"
+                 placeholder="you@example.com"
+                 class="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">
+            Password
+          </label>
+          <input type="password"
+                 placeholder="••••••••"
+                 class="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500" />
+        </div>
+
+        <button type="submit"
+                class="w-full rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+          Create account
+        </button>
+      </form>
+
+      <div class="mt-6 text-sm text-gray-600">
+        Already have an account?
+        <%= link_to "Sign in", login_path,
+          class: "font-medium text-indigo-600 hover:text-indigo-500" %>
+      </div>
+    </div>
+  </div>
+</div>
