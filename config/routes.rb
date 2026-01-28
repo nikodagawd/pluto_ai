@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   devise_for :users
   root "chat#index"
+  get "/login", to: "pages#login", as: :login
   post "/chat", to: "chat#create"
 
   resources :lists, only: [:index, :show, :create]
