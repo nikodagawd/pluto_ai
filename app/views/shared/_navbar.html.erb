@@ -15,7 +15,6 @@
     </div>
 
     <div class="hidden flex-1 items-center justify-center gap-8 md:flex">
-
       <%= link_to "Discover", root_path,
         class: "text-sm font-medium text-gray-700 hover:text-gray-900" %>
 
@@ -30,11 +29,11 @@
     </div>
 
     <div class="flex flex-1 items-center justify-end gap-3">
-
-      <%= link_to "Sign in", "#",
+      <%= link_to "Sign in", login_path,
         class: "rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50" %>
 
       <%= link_to "Get started", "#",
         class: "rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500" %>
     </div>
   </div>
+</nav>
