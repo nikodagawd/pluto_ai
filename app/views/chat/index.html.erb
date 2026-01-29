@@ -8,53 +8,69 @@
       <h1 class="text-5xl md:text-6xl font-bold text-black mt-4">
         Company Explorer
       </h1>
-      <p class="text-sm md:text-base text-gray-700 mt-2 max-w-xl mx-auto">
-        Ask our AI to find innovative companies. Use natural language to search by sector, location, and more.
-      </p>
     </div>
 
     <div class="w-full bg-white rounded-xl shadow-lg p-8 flex flex-col">
       <p class="text-gray-500 mb-4 text-lg">What would you like to know?</p>
 
-      <%= form_with url: chat_path, method: :post, local: true, data: { turbo: false }, class: "flex w-full mb-6" do |f| %>
-        <%= f.text_field :message,
-          value: @message,
-          placeholder: "Type your question here...",
-          class: "flex-grow border border-gray-300 rounded-l-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" %>
-        <%= f.submit "Send", class: "bg-indigo-600 text-white px-6 py-3 rounded-r-lg hover:bg-indigo-700 cursor-pointer transition-colors" %>
+      <%= form_with url: chat_path, method: :post, local: true, data: { turbo: false }, class: "w-full mb-6" do |f| %>
+        <div class="relative border border-gray-300 rounded-xl focus-within:ring-2 focus-within:ring-indigo-500 bg-gray-50">
+          <%= f.text_area :message, value: @message, placeholder: "Type your question here...",
+              class: "w-full bg-transparent border-none p-4 pb-16 text-gray-700 outline-none resize-none" %>
+
+          <div class="absolute bottom-3 left-3 flex items-center gap-1">
+            <label class="p-2 text-gray-400 hover:text-indigo-600 cursor-pointer rounded-lg hover:bg-white">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.51a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+              <input type="file" class="hidden">
+            </label>
+            <button type="button" class="p-2 text-gray-400 hover:text-red-500 rounded-lg hover:bg-white">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+            </button>
+          </div>
+
+          <div class="absolute bottom-3 right-3">
+            <%= f.submit "Send", class: "bg-indigo-600 text-white px-8 py-2.5 rounded-lg hover:bg-indigo-700 font-bold cursor-pointer" %>
+          </div>
+        </div>
+
+        <% if @companies.present? %>
+          <div class="flex flex-row items-center gap-2 mt-4 overflow-x-auto pb-2 no-scrollbar">
+            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mr-2 whitespace-nowrap">Quick Filters:</span>
+
+            <select id="cityFilter" onchange="filterCompanies()" class="bg-white border border-gray-200 text-gray-600 text-[11px] rounded-full px-4 py-1.5 outline-none cursor-pointer">
+              <option value="">City</option>
+              <% @companies.map(&:city).uniq.compact.sort.each do |city| %>
+                <option value="<%= city %>"><%= city %></option>
+              <% end %>
+            </select>
+
+            <select id="sectorFilter" onchange="filterCompanies()" class="bg-white border border-gray-200 text-gray-600 text-[11px] rounded-full px-4 py-1.5 outline-none cursor-pointer">
+              <option value="">Sector</option>
+              <% @companies.map(&:sector).uniq.compact.sort.each do |sector| %>
+                <option value="<%= sector %>"><%= sector %></option>
+              <% end %>
+            </select>
+          </div>
+        <% end %>
       <% end %>
 
       <% if @companies.present? %>
-
         <% if @is_recommendation %>
           <div class="mb-6 bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg">
-            <div class="flex">
-              <div class="flex-shrink-0">
-                <span class="text-amber-400 text-xl">⚠️</span>
-              </div>
-              <div class="ml-3">
-                <p class="text-sm text-amber-800">
-                  I couldn't find exact matches for <strong>"<%= @message %>"</strong>, but these similar companies might interest you:
-                </p>
-              </div>
-            </div>
+            <p class="text-sm text-amber-800">
+              ⚠️ I couldn't find exact matches for <strong>"<%= @message %>"</strong>, but these might interest you:
+            </p>
           </div>
-        <% else %>
-          <h3 class="text-lg font-semibold text-gray-800 mb-4">Top matches for your search:</h3>
         <% end %>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div id="companiesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
           <% @companies.each do |company| %>
-            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 shadow hover:shadow-md transition flex flex-col group">
-              <strong class="text-lg text-indigo-900 mb-1 group-hover:text-indigo-600 transition-colors">
-                <%= company.company_name %>
-              </strong>
-              <small class="text-gray-600 mb-2">
-                <%= company.sector %> · <%= company.city %>, <%= company.country %>
-              </small>
-              <p class="text-sm text-gray-700 mb-3 line-clamp-2">
-                <%= company.description %>
-              </p>
+            <div class="company-card bg-gray-50 rounded-lg p-4 border border-gray-200 flex flex-col"
+                 data-city="<%= company.city %>"
+                 data-sector="<%= company.sector %>">
+              <strong class="text-lg text-indigo-900 mb-1"><%= company.company_name %></strong>
+              <small class="text-gray-600 mb-2"><%= company.sector %> · <%= company.city %></small>
+              <p class="text-sm text-gray-700 mb-3 line-clamp-2"><%= company.description %></p>
               <small class="text-gray-500 mt-auto pt-2 border-t border-gray-100 flex justify-between">
                 <span><%= company.employees %> employees</span>
                 <span>Founded in <%= company.founded_year %></span>
@@ -62,12 +78,26 @@
             </div>
           <% end %>
         </div>
-
-      <% elsif @message.present? %>
-        <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg">
-          <p class="text-red-700 text-sm">No results found for "<%= @message %>". Try another description.</p>
-        </div>
       <% end %>
     </div>
   </div>
 </div>
+
+<script>
+  function filterCompanies() {
+    const city = document.getElementById('cityFilter').value;
+    const sector = document.getElementById('sectorFilter').value;
+    const cards = document.querySelectorAll('.company-card');
+
+    cards.forEach(card => {
+      const matchCity = city === "" || card.getAttribute('data-city') === city;
+      const matchSector = sector === "" || card.getAttribute('data-sector') === sector;
+
+      if (matchCity && matchSector) {
+        card.style.display = "flex";
+      } else {
+        card.style.display = "none";
+      }
+    });
+  }
+</script>
