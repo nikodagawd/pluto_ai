@@ -9,46 +9,53 @@
         </p>
       </div>
 
-      <form class="space-y-5">
+      <%= form_with url: user_registration_path,
+            scope: :user,
+            local: true,
+            class: "space-y-5" do |f| %>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">
-            Full name
-          </label>
-          <input type="text"
-                 placeholder="Firstname Lastname"
-                 class="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500" />
+          <%= f.label :username, "Firstname", class: "block text-sm font-medium text-gray-700" %>
+          <%= f.text_field :username,
+                placeholder: "Firstname",
+                class: "mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500" %>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">
-            Email address
-          </label>
-          <input type="email"
-                 placeholder="you@example.com"
-                 class="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500" />
+          <%= f.label :email, "Email", class: "block text-sm font-medium text-gray-700" %>
+          <%= f.email_field :email,
+                placeholder: "you@example.com",
+                autocomplete: "email",
+                class: "mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500" %>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <input type="password"
-                 placeholder="••••••••"
-                 class="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500" />
+          <%= f.label :password, "Password", class: "block text-sm font-medium text-gray-700" %>
+          <%= f.password_field :password,
+                placeholder: "••••••••",
+                autocomplete: "new-password",
+                class: "mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500" %>
         </div>
 
-        <button type="submit"
-                class="w-full rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
-          Create account
-        </button>
-      </form>
+        <div>
+          <%= f.label :password_confirmation, "Confirm password", class: "block text-sm font-medium text-gray-700" %>
+          <%= f.password_field :password_confirmation,
+                placeholder: "••••••••",
+                autocomplete: "new-password",
+                class: "mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+
+        <%= f.submit "Create account",
+              class: "w-full rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500" %>
+
+      <% end %>
 
       <div class="mt-6 text-sm text-gray-600">
         Already have an account?
         <%= link_to "Sign in", login_path,
           class: "font-medium text-indigo-600 hover:text-indigo-500" %>
       </div>
+
     </div>
   </div>
 </div>

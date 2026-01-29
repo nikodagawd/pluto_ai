@@ -2,11 +2,12 @@ class ListsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @lists = current_user.lists
+    list = current_user.lists.find_or_create_by!(name: "My List")
+    @companies = list.companies
 
     respond_to do |format|
       format.html
-      format.json { render json: @lists }
+      format.json { render json: @companies }
     end
   end
 
@@ -21,17 +22,33 @@ class ListsController < ApplicationController
   end
 
   def create
-    @list = current_user.lists.build(list_params)
+    # Plus-button adds a company to "My List"
+    if params[:company_name].present?
+      list = current_user.lists.find_or_create_by!(name: "My List")
 
-    respond_to do |format|
-      if @list.save
-        format.html { redirect_to @list, notice: "List created successfully." }
-        format.json { render json: @list, status: :created }
-      else
-        format.html { redirect_to lists_path, alert: "Could not create list." }
-        format.json { render json: @list.errors, status: :unprocessable_entity }
+      company = Company.find_or_create_by!(
+        company_name: params[:company_name],
+        city: params[:city]
+      ) do |c|
+        c.sector = params[:sector]
+        c.description = params[:description]
+        c.employees = params[:employees]
+        c.founded_year = params[:founded_year]
       end
+
+      # Avoid duplicates in the list
+      list.companies << company unless list.companies.exists?(company.id)
+
+      respond_to do |format|
+        format.html { redirect_back fallback_location: root_path, notice: "Added to My Favorites ✅" }
+        format.json { render json: { list: list, company: company }, status: :created }
+      end
+
+      return
     end
+
+    # If someone hits POST /lists without company data
+    redirect_to lists_path, alert: "Nothing to add."
   end
 
   private
