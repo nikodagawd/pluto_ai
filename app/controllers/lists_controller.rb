@@ -2,12 +2,14 @@ class ListsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    list = current_user.lists.find_or_create_by!(name: "My List")
-    @companies = list.companies
+    @list  = current_user.lists.new
+    @lists = current_user.lists
+                         .order(created_at: :desc)
+                         .includes(company_lists: :company)
 
     respond_to do |format|
       format.html
-      format.json { render json: @companies }
+      format.json { render json: @lists }
     end
   end
 
@@ -25,14 +27,14 @@ class ListsController < ApplicationController
     if params[:list].present? && params[:list][:name].present?
       @list = current_user.lists.new(list_params)
 
-      respond_to do |format|
-        if @list.save
-          format.html { redirect_to lists_path, notice: "List created ✅" }
-          format.json { render json: { list: @list }, status: :created }
-        else
-          format.html { redirect_to lists_path, alert: @list.errors.full_messages.to_sentence.presence || "Could not create list." }
-          format.json { render json: { errors: @list.errors.full_messages }, status: :unprocessable_entity }
-        end
+      if @list.save
+        redirect_to lists_path, notice: "List created ✅"
+      else
+        @lists = current_user.lists
+                             .order(created_at: :desc)
+                             .includes(company_lists: :company)
+        flash.now[:alert] = @list.errors.full_messages.to_sentence
+        render :index, status: :unprocessable_entity
       end
 
       return
@@ -51,10 +53,10 @@ class ListsController < ApplicationController
         c.founded_year = params[:founded_year]
       end
 
-      company_list = list.company_lists.find_or_create_by!(company: company)
+      list.companies << company unless list.companies.exists?(company.id)
 
       respond_to do |format|
-        format.html { redirect_back fallback_location: root_path, notice: "Added to My Favorites ✅" }
+        format.html { redirect_back fallback_location: root_path, notice: "Added ✅" }
         format.json { render json: { list: list, company: company }, status: :created }
       end
 
