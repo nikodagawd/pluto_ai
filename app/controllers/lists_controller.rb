@@ -22,7 +22,22 @@ class ListsController < ApplicationController
   end
 
   def create
-    # Plus-button adds a company to "My List"
+    if params[:list].present? && params[:list][:name].present?
+      @list = current_user.lists.new(list_params)
+
+      respond_to do |format|
+        if @list.save
+          format.html { redirect_to lists_path, notice: "List created ✅" }
+          format.json { render json: { list: @list }, status: :created }
+        else
+          format.html { redirect_to lists_path, alert: @list.errors.full_messages.to_sentence.presence || "Could not create list." }
+          format.json { render json: { errors: @list.errors.full_messages }, status: :unprocessable_entity }
+        end
+      end
+
+      return
+    end
+
     if params[:company_name].present?
       list = current_user.lists.find_or_create_by!(name: "My List")
 
@@ -36,7 +51,6 @@ class ListsController < ApplicationController
         c.founded_year = params[:founded_year]
       end
 
-      # Avoid duplicates in the list
       list.companies << company unless list.companies.exists?(company.id)
 
       respond_to do |format|
@@ -47,8 +61,7 @@ class ListsController < ApplicationController
       return
     end
 
-    # If someone hits POST /lists without company data
-    redirect_to lists_path, alert: "Nothing to add."
+    redirect_to lists_path, alert: "Nothing added."
   end
 
   private

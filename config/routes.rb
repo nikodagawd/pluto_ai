@@ -6,5 +6,6 @@ Rails.application.routes.draw do
   get "/chat", to: "chat#index"
   post "/chat", to: "chat#create"
 
-  resources :lists, only: [:index, :show, :create]
+  resources :lists, only: [:index, :show, :create, :destroy]
+  resources :company_lists, only: [:create, :destroy]
 end

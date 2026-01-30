@@ -1,4 +1,7 @@
 class Company < ApplicationRecord
+  has_many :company_lists, dependent: :destroy
+  has_many :lists, through: :company_lists
+
   def self.recommend(filters)
     scope = all
 
