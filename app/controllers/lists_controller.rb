@@ -51,7 +51,7 @@ class ListsController < ApplicationController
         c.founded_year = params[:founded_year]
       end
 
-      list.companies << company unless list.companies.exists?(company.id)
+      company_list = list.company_lists.find_or_create_by!(company: company)
 
       respond_to do |format|
         format.html { redirect_back fallback_location: root_path, notice: "Added to My Favorites ✅" }

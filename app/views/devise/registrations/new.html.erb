@@ -1,0 +1,111 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full">
+    <!-- Logo & Header -->
+    <div class="text-center mb-8">
+      <div class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500 border-2 border-black text-white font-bold text-xl mx-auto mb-4">
+        ✦
+      </div>
+      <h2 class="text-2xl font-semibold text-gray-900">
+        Create your account
+      </h2>
+      <p class="mt-2 text-sm text-gray-500">
+        Start exploring companies with AI-powered insights.
+      </p>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white rounded-lg border-2 border-black p-8">
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), class: "space-y-6") do |f| %>
+
+        <!-- Error Messages -->
+        <% if resource.errors.any? %>
+          <div class="bg-red-50 border border-red-200 rounded-md p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  <%= pluralize(resource.errors.count, "error") %> prevented sign up:
+                </h3>
+                <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                  <% resource.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Username Field -->
+        <div>
+          <%= f.label :username, class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_field :username,
+              autofocus: true,
+              autocomplete: "username",
+              placeholder: "Choose your username",
+              class: "w-full px-3 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" %>
+        </div>
+
+        <!-- Email Field -->
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+            Email
+          </label>
+          <%= f.email_field :email,
+              autocomplete: "email",
+              placeholder: "Enter your email",
+              class: "w-full px-3 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" %>
+        </div>
+
+        <!-- Password Field -->
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+            Password
+            <span class="text-gray-400 font-normal">(<%= @minimum_password_length || 6 %> characters minimum)</span>
+          </label>
+          <%= f.password_field :password,
+              autocomplete: "new-password",
+              placeholder: "Create a password",
+              class: "w-full px-3 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" %>
+        </div>
+
+        <!-- Password Confirmation Field -->
+        <div>
+          <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">
+            Confirm password
+          </label>
+          <%= f.password_field :password_confirmation,
+              autocomplete: "new-password",
+              placeholder: "Confirm your password",
+              class: "w-full px-3 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" %>
+        </div>
+
+        <!-- Submit Button (Figma Style - Pink/Purple with Black Border) -->
+        <div>
+          <%= f.submit "Create account",
+              class: "w-full py-3 px-4 border-2 border-black bg-purple-500 text-white rounded-md text-sm font-semibold hover:bg-purple-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" %>
+        </div>
+      <% end %>
+
+      <!-- Divider -->
+      <div class="relative my-6">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-gray-200"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-2 bg-white text-gray-500">or</span>
+        </div>
+      </div>
+
+      <!-- Sign In Link -->
+      <p class="text-center text-sm text-gray-600">
+        Already have an account?
+        <%= link_to "Sign in", new_session_path(resource_name), class: "font-medium text-purple-600 hover:text-purple-500" %>
+      </p>
+    </div>
+  </div>
+</div>
