@@ -4,4 +4,8 @@ class PagesController < ApplicationController
 
   def signup
   end
+
+  def goodbye
+    @name = flash[:goodbye_name] || "friend"
+  end
 end
