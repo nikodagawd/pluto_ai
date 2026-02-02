@@ -1,7 +1,10 @@
 class ChatController < ApplicationController
+  before_action :authenticate_user!
+
   def index
     @companies = []
     @is_recommendation = false
+    @lists =current_user.lists.order(created_at: :desc)
   end
 
   def create
@@ -9,6 +12,7 @@ class ChatController < ApplicationController
     search_result = search_companies(@message)
     @companies = search_result[:companies]
     @is_recommendation = search_result[:is_recommendation]
+    @lists = current_user.lists.order(created_at: :desc)
     render :index, formats: [:html]
   end
 
@@ -32,7 +36,7 @@ class ChatController < ApplicationController
     begin
       parsed = JSON.parse(response.content.gsub(/```json|```/, "").strip)
 
-      
+
       results = Company.all
       results = results.where("city ILIKE ?", "%#{parsed['city']}%") if parsed['city'].present?
 
