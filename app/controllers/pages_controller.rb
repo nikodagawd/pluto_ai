@@ -8,4 +8,7 @@ class PagesController < ApplicationController
   def goodbye
     @name = flash[:goodbye_name] || "friend"
   end
+
+  def about
+  end
 end

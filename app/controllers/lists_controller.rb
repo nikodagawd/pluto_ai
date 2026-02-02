@@ -66,6 +66,12 @@ class ListsController < ApplicationController
     redirect_to lists_path, alert: "Nothing added."
   end
 
+  def destroy
+    @list = current_user.lists.find(params[:id])
+    @list.destroy
+    redirect_to lists_path, notice: 'List deleted successfully'
+  end
+
   private
 
   def list_params

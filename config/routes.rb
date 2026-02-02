@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get "/login", to: "pages#login", as: :login
   get "/signup", to: "pages#signup", as: :signup
   get "/goodbye", to: "pages#goodbye", as: :goodbye
+  get "/about", to: "pages#about", as: :about
   get "/chat", to: "chat#index"
   post "/chat", to: "chat#create"
 
