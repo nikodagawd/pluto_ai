@@ -1,0 +1,29 @@
+<div class="max-w-lg mx-auto py-12">
+  <div class="bg-white rounded-lg shadow-lg p-8 text-center">
+    <div class="mb-6">
+      <svg class="w-16 h-16 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+    </div>
+
+    <h1 class="text-3xl font-bold text-gray-900 mb-4">Payment Successful!</h1>
+    <p class="text-gray-600 mb-6">Thank you for your purchase.</p>
+
+    <div class="bg-gray-50 rounded-lg p-4 mb-6">
+      <div class="flex justify-between mb-2">
+        <span class="text-gray-600">Plan:</span>
+        <span class="font-semibold"><%= @order.plan.capitalize %></span>
+      </div>
+      <div class="flex justify-between mb-2">
+        <span class="text-gray-600">Amount:</span>
+        <span class="font-semibold"><%= humanized_money_with_symbol(@order.amount) %></span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-600">Status:</span>
+        <span class="font-semibold text-green-600"><%= @order.state.capitalize %></span>
+      </div>
+    </div>
+
+    <%= link_to "Start Exploring", root_path, class: "inline-block bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition" %>
+  </div>
+</div>
