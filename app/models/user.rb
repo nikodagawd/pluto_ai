@@ -5,6 +5,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   # Associations
+  has_many :orders, dependent: :destroy
   has_many :chats, dependent: :destroy
   has_many :lists, dependent: :destroy
   has_many :company_lists, through: :lists

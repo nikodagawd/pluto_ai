@@ -1,0 +1,205 @@
+<div class="min-h-screen bg-[#fef9f0]">
+  <div class="max-w-6xl mx-auto px-6 py-16">
+
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold text-black mb-4">
+        Simple, Transparent Pricing
+      </h1>
+      <p class="text-lg md:text-xl text-gray-600">
+        Choose the perfect plan to accelerate your market discovery
+      </p>
+    </div>
+
+    <!-- Pricing Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+
+      <!-- Starter Plan -->
+      <div class="bg-white border-2 border-black rounded-xl p-6 flex flex-col">
+        <div class="mb-4">
+          <h3 class="text-xl font-bold text-black mb-1">Starter</h3>
+          <p class="text-gray-600 text-sm">Perfect for exploring opportunities</p>
+        </div>
+
+        <div class="mb-6">
+          <span class="text-4xl font-bold text-black">$29</span>
+          <span class="text-gray-500 text-lg">/month</span>
+        </div>
+
+        <ul class="space-y-3 flex-grow mb-6">
+          <li class="flex items-center text-gray-700">
+            <span class="text-green-500 font-bold mr-3">&#10003;</span>
+            50 AI-powered searches per month
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-green-500 font-bold mr-3">&#10003;</span>
+            Basic company profiles
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-green-500 font-bold mr-3">&#10003;</span>
+            Export to CSV
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-green-500 font-bold mr-3">&#10003;</span>
+            Email support
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-green-500 font-bold mr-3">&#10003;</span>
+            Access to segment database
+          </li>
+        </ul>
+
+        <%= button_to "Get Started", orders_path(plan: 'starter'), method: :post,
+            class: "w-full bg-purple-500 text-white font-semibold py-3 px-6 rounded-lg border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all" %>
+      </div>
+
+      <!-- Pro Plan (Featured) -->
+      <div class="bg-purple-200 border-2 border-black rounded-xl p-6 flex flex-col relative">
+        <!-- MOST POPULAR Badge -->
+        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+          <span class="bg-black text-white text-xs font-bold px-4 py-1 rounded-full">MOST POPULAR</span>
+        </div>
+
+        <div class="mb-4 mt-2">
+          <h3 class="text-xl font-bold text-black mb-1">Professional</h3>
+          <p class="text-gray-600 text-sm">For serious entrepreneurs & investors</p>
+        </div>
+
+        <div class="mb-6">
+          <span class="text-4xl font-bold text-black">$99</span>
+          <span class="text-gray-500 text-lg">/month</span>
+        </div>
+
+        <ul class="space-y-3 flex-grow mb-6">
+          <li class="flex items-center text-gray-700">
+            <span class="text-purple-600 font-bold mr-3">&#10003;</span>
+            <strong>Unlimited</strong>&nbsp;AI-powered searches
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-purple-600 font-bold mr-3">&#10003;</span>
+            Advanced company insights & analytics
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-purple-600 font-bold mr-3">&#10003;</span>
+            Export to CSV, Excel & PDF
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-purple-600 font-bold mr-3">&#10003;</span>
+            Priority support
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-purple-600 font-bold mr-3">&#10003;</span>
+            Custom segments & saved searches
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-purple-600 font-bold mr-3">&#10003;</span>
+            API access (100k calls/month)
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-purple-600 font-bold mr-3">&#10003;</span>
+            Real-time alerts & notifications
+          </li>
+        </ul>
+
+        <%= button_to "Get Started", orders_path(plan: 'professional'), method: :post,
+            class: "w-full bg-purple-500 text-white font-semibold py-3 px-6 rounded-lg border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all" %>
+      </div>
+
+      <!-- Enterprise Plan -->
+      <div class="bg-white border-2 border-black rounded-xl p-6 flex flex-col">
+        <div class="mb-4">
+          <h3 class="text-xl font-bold text-black mb-1">Enterprise</h3>
+          <p class="text-gray-600 text-sm">For large teams & organizations</p>
+        </div>
+
+        <div class="mb-6">
+          <span class="text-4xl font-bold text-black">Custom</span>
+        </div>
+
+        <ul class="space-y-3 flex-grow mb-6">
+          <li class="flex items-center text-gray-700">
+            <span class="text-green-500 font-bold mr-3">&#10003;</span>
+            Everything in Professional
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-green-500 font-bold mr-3">&#10003;</span>
+            Unlimited team members
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-green-500 font-bold mr-3">&#10003;</span>
+            Dedicated account manager
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-green-500 font-bold mr-3">&#10003;</span>
+            Custom AI model training
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-green-500 font-bold mr-3">&#10003;</span>
+            White-label options
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-green-500 font-bold mr-3">&#10003;</span>
+            Unlimited API access
+          </li>
+          <li class="flex items-center text-gray-700">
+            <span class="text-green-500 font-bold mr-3">&#10003;</span>
+            24/7 premium support
+          </li>
+        </ul>
+
+        <%= link_to "Contact Sales", "mailto:contact@pluto.ai?subject=Enterprise%20Plan",
+            class: "w-full block text-center bg-white text-gray-700 font-semibold py-3 px-6 rounded-lg border-2 border-black hover:bg-gray-50 transition-all" %>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="max-w-4xl mx-auto mb-16">
+      <h2 class="text-3xl font-bold text-black text-center mb-10">
+        Frequently Asked Questions
+      </h2>
+
+      <div class="space-y-4">
+        <div class="bg-white border-2 border-black rounded-xl p-6">
+          <h3 class="font-bold text-black mb-2">Can I change plans later?</h3>
+          <p class="text-gray-600">
+            Yes! You can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.
+          </p>
+        </div>
+
+        <div class="bg-white border-2 border-black rounded-xl p-6">
+          <h3 class="font-bold text-black mb-2">What payment methods do you accept?</h3>
+          <p class="text-gray-600">
+            We accept all major credit cards (Visa, Mastercard, American Express) and bank transfers for Enterprise plans.
+          </p>
+        </div>
+
+        <div class="bg-white border-2 border-black rounded-xl p-6">
+          <h3 class="font-bold text-black mb-2">Is there a free trial?</h3>
+          <p class="text-gray-600">
+            Yes! All plans come with a 14-day free trial. No credit card required to start.
+          </p>
+        </div>
+
+        <div class="bg-white border-2 border-black rounded-xl p-6">
+          <h3 class="font-bold text-black mb-2">What happens if I exceed my search limit?</h3>
+          <p class="text-gray-600">
+            For Starter plan users, you'll be notified when you're approaching your limit. You can upgrade anytime or purchase additional searches.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="bg-purple-200 border-2 border-black rounded-xl p-10 text-center">
+      <h2 class="text-3xl font-bold text-black mb-3">
+        Still have questions?
+      </h2>
+      <p class="text-gray-600 text-lg mb-6">
+        Our team is here to help you find the perfect plan for your needs
+      </p>
+      <%= link_to "Contact Us", "mailto:contact@pluto.ai?subject=Pricing%20Question",
+          class: "inline-block bg-black text-white font-semibold py-3 px-8 rounded-lg border-2 border-black hover:bg-gray-800 transition-all" %>
+    </div>
+
+  </div>
+</div>

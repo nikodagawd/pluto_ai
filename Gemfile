@@ -76,3 +76,9 @@ group :test do
 end
 
 gem "cssbundling-rails", "~> 1.4"
+
+gem "tailwindcss-rails", "~> 4.4"
+
+# Stripe Payments
+gem 'stripe'
+gem 'money-rails'
