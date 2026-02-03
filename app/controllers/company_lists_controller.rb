@@ -34,6 +34,10 @@ class CompanyListsController < ApplicationController
   private
 
   def company_list_params
-    params.require(:company_list).permit(:company_id)
+    if params[:company_list].present?
+      params.require(:company_list).permit(:company_id)
+    else
+      params.permit(:company_id)
+    end
   end
 end
