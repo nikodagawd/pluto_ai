@@ -11,54 +11,79 @@
       <p class="mt-6 text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-tight">
         <span class="block mb-2 text-black font-medium"> Ask our AI to find innovative companies. </span>
         <span class="text-gray-500 text-base md:text-lg">
-          Use natural language to search by <span class="text-indigo-600">sector</span>, <span class="text-indigo-600">location</span>, and <span class="text-indigo-600">funding</span>.
+          Use natural language to search by <span class="text-indigo-600">sector</span>, <span class="text-indigo-600">location</span> and <span class="text-indigo-600">funding</span>.
         </span>
       </p>
     </div>
 
-    <div class="w-full bg-white rounded-xl shadow-lg p-8 flex flex-col">
-      <p class="text-gray-500 mb-4 text-lg">What would you like to know?</p>
+    <div class="w-full bg-white rounded-xl shadow-lg p-8 flex flex-col relative z-40">
 
-      <%= form_with url: chat_path, method: :post, local: true, data: { turbo: false }, class: "w-full mb-6" do |f| %>
-        <div class="relative border border-gray-300 rounded-xl focus-within:ring-2 focus-within:ring-indigo-500 bg-gray-50">
-          <%= f.text_area :message, value: @message, placeholder: "Type your question here...",
-              class: "w-full bg-transparent border-none p-4 pb-16 text-gray-700 outline-none resize-none" %>
+      <%= form_with url: chat_path, method: :post, local: true, data: { turbo: false }, class: "w-full mb-2", id: "chatForm" do |f| %>
+        <div class="relative border border-gray-300 rounded-xl focus-within:ring-2 focus-within:ring-indigo-500 bg-gray-50 p-4">
+          <%= f.text_area :message, value: @message, placeholder: "What would you like to know?", id: "chatInput",
+              class: "w-full bg-transparent border-none p-0 text-gray-700 placeholder-gray-400 outline-none resize-none min-h-[80px] text-lg" %>
           <div class="absolute bottom-3 right-3">
-            <%= f.submit "Send", class: "bg-indigo-600 text-white px-8 py-2.5 rounded-lg hover:bg-indigo-700 font-bold cursor-pointer" %>
+            <%= f.submit "Send", class: "bg-indigo-600 text-white px-8 py-2.5 rounded-lg hover:bg-indigo-700 font-bold cursor-pointer transition-colors shadow-md" %>
           </div>
         </div>
-
-        <% if @companies.present? %>
-          <div class="flex flex-row items-center gap-2 mt-4 overflow-x-auto pb-2 no-scrollbar">
-            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mr-2 whitespace-nowrap">Quick Filters:</span>
-            <select id="cityFilter" onchange="filterCompanies()" class="bg-white border border-gray-200 text-gray-600 text-[11px] rounded-full px-4 py-1.5 outline-none cursor-pointer">
-              <option value="">City</option>
-              <% @companies.map(&:city).uniq.compact.sort.each do |city| %>
-                <option value="<%= city %>"><%= city %></option>
-              <% end %>
-            </select>
-            <select id="sectorFilter" onchange="filterCompanies()" class="bg-white border border-gray-200 text-gray-600 text-[11px] rounded-full px-4 py-1.5 outline-none cursor-pointer">
-              <option value="">Sector</option>
-              <% @companies.map(&:sector).uniq.compact.sort.each do |sector| %>
-                <option value="<%= sector %>"><%= sector %></option>
-              <% end %>
-            </select>
-          </div>
-        <% end %>
       <% end %>
 
+      <div class="flex items-center gap-4 w-full px-1 mb-2 mt-2 relative z-50">
+        <input type="file" id="fileUploadInput" class="hidden">
+
+        <button type="button" onclick="document.getElementById('fileUploadInput').click()" class="text-gray-400 hover:text-indigo-600 transition-colors" title="Attach Document">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.51a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        </button>
+
+        <button type="button" class="text-gray-400 hover:text-indigo-600 transition-colors" title="Voice Search">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+        </button>
+
+        <div class="relative inline-block ml-2">
+          <button type="button" onclick="toggleSavedSearches()" id="savedSearchesBtn" class="flex items-center gap-2 bg-[#fdf5e6] border-2 border-black px-3 py-1.5 rounded-lg text-xs font-bold text-black hover:bg-[#f5e6d3] transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[1px] active:translate-y-[1px]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Saved History
+          </button>
+
+          <div id="savedSearchesMenu" class="hidden absolute left-0 top-full mt-2 w-80 bg-[#fdf5e6] border-2 border-black rounded-xl shadow-[6px_6px_0px_0px_rgba(0,0,0,0.8)] z-[100] overflow-hidden">
+            <div class="p-2 border-b-2 border-black bg-white flex justify-between items-center">
+              <span class="text-[10px] font-black uppercase tracking-tight">Recent Activity</span>
+              <button type="button" onclick="clearAllHistory()" class="text-[10px] text-red-600 font-bold hover:underline">Clear all</button>
+            </div>
+            <div id="historyItemsContainer" class="history-scroll-box custom-scrollbar">
+              </div>
+          </div>
+        </div>
+      </div>
+
       <% if @companies.present? %>
-        <div id="companiesGrid" class="flex flex-col gap-6 mt-4 items-center w-full">
+        <div id="quickFilters" class="flex flex-row items-center gap-2 mt-6 overflow-x-auto pb-2 no-scrollbar border-t border-gray-100 pt-6">
+          <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mr-2 whitespace-nowrap">Quick Filters:</span>
+          <select id="cityFilter" onchange="filterCompanies()" class="bg-white border border-gray-200 text-gray-600 text-[11px] rounded-full px-4 py-1.5 outline-none cursor-pointer hover:border-indigo-400 transition-colors">
+            <option value="">City</option>
+            <% @companies.map(&:city).uniq.compact.sort.each do |city| %>
+              <option value="<%= city %>"><%= city %></option>
+            <% end %>
+          </select>
+          <select id="sectorFilter" onchange="filterCompanies()" class="bg-white border border-gray-200 text-gray-600 text-[11px] rounded-full px-4 py-1.5 outline-none cursor-pointer hover:border-indigo-400 transition-colors">
+            <option value="">Sector</option>
+            <% @companies.map(&:sector).uniq.compact.sort.each do |sector| %>
+              <option value="<%= sector %>"><%= sector %></option>
+            <% end %>
+          </select>
+        </div>
+
+        <div id="companiesGrid" class="flex flex-col gap-6 mt-6 items-center w-full pb-10">
           <% @companies.each do |company| %>
-            <div class="company-card relative w-full max-w-3xl bg-white rounded-xl border border-gray-200 shadow-sm p-6 flex flex-row justify-between cursor-pointer hover:border-indigo-300 transition-all"
+            <div class="company-card hover-card relative w-full max-w-3xl bg-white rounded-xl border border-gray-200 shadow-sm p-6 flex flex-row justify-between cursor-pointer"
                  data-city="<%= company.city %>"
                  data-sector="<%= company.sector %>"
                  onclick="document.getElementById('modal-<%= company.id %>').showModal()">
 
-              <div class="absolute top-4 right-4 z-50">
+              <div class="absolute top-4 right-4 z-10">
                 <%= button_to lists_path(company_name: company.company_name, sector: company.sector, city: company.city, description: company.description, employees: company.employees, founded_year: company.founded_year),
-                    method: :post, class: "h-8 w-8 flex items-center justify-center rounded-full border border-gray-300 bg-white text-indigo-600 hover:bg-indigo-50 font-bold shadow-sm",
-                    form: { data: { turbo: false } } do %>+<% end %>
+                    method: :post, class: "h-8 w-8 flex items-center justify-center rounded-full border border-gray-300 bg-white text-indigo-600 hover:bg-indigo-50 font-bold shadow-sm transition-transform hover:scale-110",
+                    form: { data: { turbo: false } }, onclick: "event.stopPropagation();" do %>+<% end %>
               </div>
 
               <div class="flex flex-col gap-3 pr-12 w-2/3">
@@ -94,10 +119,9 @@
 
             <dialog id="modal-<%= company.id %>"
                     style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);"
-                    class="z-50 m-0 w-[95%] max-w-2xl rounded-2xl border-none p-0 shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-sm overflow-hidden">
+                    class="z-[100] m-0 w-[95%] max-w-2xl rounded-2xl border-none p-0 shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-sm overflow-hidden">
 
               <div class="bg-white p-8 flex flex-col gap-6">
-
                 <div class="flex justify-between items-start">
                   <div class="flex flex-col gap-1.5 w-2/3">
                     <div class="flex items-center gap-3">
@@ -109,10 +133,7 @@
                     </div>
                     <p class="text-[11px] text-gray-500 font-medium italic"><%= company.description.truncate(100) %></p>
                   </div>
-                  <div class="flex items-center gap-3">
-                    <button class="bg-indigo-600 text-white px-4 py-1.5 rounded-lg text-[10px] font-bold hover:bg-indigo-700 transition-all">Save to list +</button>
-                    <button onclick="document.getElementById('modal-<%= company.id %>').close()" class="text-gray-400 hover:text-gray-600 text-3xl font-light leading-none">&times;</button>
-                  </div>
+                  <button onclick="document.getElementById('modal-<%= company.id %>').close()" class="text-gray-400 hover:text-gray-600 text-3xl font-light leading-none">&times;</button>
                 </div>
 
                 <div class="flex gap-2 -mt-4">
@@ -138,22 +159,20 @@
                   </div>
                 </div>
 
-                <div class="flex gap-8 pt-4 border-t border-gray-50 items-stretch">
-
-                  <div class="w-40 h-36 bg-slate-50 border border-gray-300 rounded-2xl relative flex-shrink-0 flex flex-col items-center justify-center overflow-hidden">
-                    <div class="absolute inset-0 opacity-20 bg-[linear-gradient(#cbd5e1_1px,transparent_1px),linear-gradient(90deg,#cbd5e1_1px,transparent_1px)] [background-size:18px_18px]"></div>
-
-                    <div class="relative z-10 mb-2 flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ef4444" class="w-8 h-8 drop-shadow-lg">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                      </svg>
-                    </div>
-
-                    <div class="px-2 text-center relative z-10">
-                      <p class="text-[9px] font-bold text-slate-800 uppercase tracking-tight"><%= company.city %></p>
-                      <p class="text-[7px] text-slate-500 font-medium mt-0.5 leading-tight">
-                        <%= company.address rescue "Main St. 123, Central District" %>
-                      </p>
+                <div class="flex gap-6 pt-4 border-t border-gray-50 items-stretch">
+                  <div class="flex-1 border border-gray-200 rounded-2xl relative overflow-hidden min-h-[160px] bg-gray-100">
+                    <img src="https://img.freepik.com/premium-vector/abstract-navigation-plan-urban-area-generic-city-map-with-signs-streets-roads-house-simple_753943-257.jpg"
+                         class="absolute inset-0 w-full h-full object-cover" alt="City Map">
+                    <div class="absolute inset-0 flex items-center justify-center p-4">
+                      <div class="bg-white p-4 rounded-xl shadow-lg border border-gray-100 flex flex-col items-center text-center max-w-[85%] relative z-10">
+                        <div class="bg-red-50 p-1.5 rounded-full mb-1">
+                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ef4444" class="w-5 h-5">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zM12 11.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                          </svg>
+                        </div>
+                        <p class="text-sm font-bold text-gray-900 uppercase tracking-wide"><%= company.city %></p>
+                        <p class="text-[11px] text-gray-600 font-semibold mt-1 leading-tight"><%= company.address rescue "Main St. 123, Central District" %></p>
+                      </div>
                     </div>
                   </div>
 
@@ -163,21 +182,17 @@
                         <span class="h-1 w-1 bg-indigo-500 rounded-full"></span> AI Insight
                       </h4>
                       <p class="text-[11px] text-gray-700 leading-relaxed font-medium">
-                        <%= company.company_name %> shows high potential in <%= company.sector %>. The current team structure supports expansion in <%= company.city %>, leverage their revenue of €<%= number_to_human(company.revenue, units: { million: 'M' }) %> for growth.
+                        <%= company.company_name %> shows high potential in <%= company.sector %>. The current team structure supports expansion in <%= company.city %>.
                       </p>
                     </div>
-
                     <a href="https://<%= company.company_name.parameterize %>.com" target="_blank" class="flex items-center justify-between px-3 py-2 border border-gray-100 rounded-xl hover:bg-gray-100 transition-all bg-gray-50 group">
                       <div class="flex flex-col">
-                        <span class="text-gray-600 text-[8px] font-bold truncate tracking-tight">
-                          <%= company.company_name.parameterize %>.com
-                        </span>
+                        <span class="text-gray-600 text-[9px] font-bold truncate tracking-tight"><%= company.company_name.parameterize %>.com</span>
                         <span class="text-[7px] font-bold text-gray-500 uppercase tracking-tighter">view official website</span>
                       </div>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400 group-hover:text-gray-600 transition-colors"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400 group-hover:text-gray-600 transition-colors"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                     </a>
                   </div>
-
                 </div>
               </div>
             </dialog>
@@ -188,7 +203,139 @@
   </div>
 </div>
 
+<style>
+  .hover-card {
+    transition: all 0.3s ease-out !important;
+  }
+  .hover-card:hover {
+    transform: translateY(-8px) scale(1.02) !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    border-color: #6366f1 !important;
+  }
+  .history-scroll-box {
+    max-height: 220px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    display: block !important;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #fdf5e6;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #000;
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #6366f1;
+  }
+</style>
+
 <script>
+  let historyData = JSON.parse(localStorage.getItem('user_chat_history')) || [];
+
+  function getTimeAgo(dateString) {
+    const now = new Date();
+    const past = new Date(dateString);
+    const diffInMs = now - past;
+    const diffInMins = Math.floor(diffInMs / (1000 * 60));
+    const diffInHrs = Math.floor(diffInMs / (1000 * 60 * 60));
+    if (diffInMins < 1) return 'Just now';
+    if (diffInMins < 60) return `${diffInMins}m ago`;
+    if (diffInHrs < 24) return `${diffInHrs}h ago`;
+    return past.toLocaleDateString();
+  }
+
+  function saveSearchToHistory() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    const newSearch = { id: Date.now(), query: text, createdAt: new Date().toISOString(), isFavorite: false };
+    historyData.unshift(newSearch);
+    localStorage.setItem('user_chat_history', JSON.stringify(historyData));
+    renderHistory();
+  }
+
+  function toggleFavorite(id, event) {
+    if(event) { event.preventDefault(); event.stopPropagation(); }
+    historyData = historyData.map(item => {
+        if (item.id === id) return { ...item, isFavorite: !item.isFavorite };
+        return item;
+    });
+    localStorage.setItem('user_chat_history', JSON.stringify(historyData));
+    renderHistory();
+  }
+
+  function clearAllHistory() {
+    if(confirm("Are you sure you want to clear all history?")) {
+      historyData = [];
+      localStorage.removeItem('user_chat_history');
+      renderHistory();
+    }
+  }
+
+  function renderHistory() {
+    const container = document.getElementById('historyItemsContainer');
+    if (!container) return;
+    if (historyData.length === 0) {
+      container.innerHTML = '<div class="p-6 text-center text-gray-400 text-[10px] italic font-bold">No search history yet.</div>';
+      return;
+    }
+    const sortedData = [...historyData].sort((a, b) => {
+      if (a.isFavorite && !b.isFavorite) return -1;
+      if (!a.isFavorite && b.isFavorite) return 1;
+      return b.id - a.id;
+    });
+    container.innerHTML = sortedData.map(item => {
+      const displayText = item.query.length > 25 ? item.query.substring(0, 25) + '...' : item.query;
+      const timeDisplay = getTimeAgo(item.createdAt || item.id);
+      const starFill = item.isFavorite ? '#000' : 'none';
+      const starStroke = '#000';
+      const rowClass = item.isFavorite ? 'bg-yellow-200/50' : 'hover:bg-[#f5e6d3]';
+      return `
+      <div class="p-3 border-b-2 border-black cursor-pointer group flex justify-between items-center transition-colors ${rowClass}">
+        <div class="flex-1 min-w-0 mr-2" onclick="loadSearch('${item.query.replace(/'/g, "\\'")}')">
+          <p class="text-[11px] font-black text-black truncate w-full uppercase tracking-tighter" title="${item.query}">${displayText}</p>
+          <span class="text-[9px] text-gray-500 font-bold block">${timeDisplay}</span>
+        </div>
+        <button onclick="toggleFavorite(${item.id}, event)" class="flex-shrink-0 p-1.5 rounded-lg border-2 border-black bg-white hover:bg-yellow-400 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[1px] active:translate-y-[1px]" type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" stroke="${starStroke}" stroke-width="3" fill="${starFill}" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </button>
+      </div>`;
+    }).join('');
+  }
+
+  function loadSearch(text) {
+    document.getElementById('chatInput').value = text;
+    document.getElementById('savedSearchesMenu').classList.add('hidden');
+  }
+
+  function toggleSavedSearches() {
+    const menu = document.getElementById('savedSearchesMenu');
+    const btn = document.getElementById('savedSearchesBtn');
+    const isHidden = menu.classList.toggle('hidden');
+
+    if (!isHidden) {
+      renderHistory();
+      
+      setTimeout(() => {
+        btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
+    }
+  }
+
+  document.addEventListener('click', (e) => {
+    const menu = document.getElementById('savedSearchesMenu');
+    const btn = document.getElementById('savedSearchesBtn');
+    if (menu && !menu.contains(e.target) && !btn.contains(e.target)) menu.classList.add('hidden');
+  });
+
+  document.getElementById('chatForm').addEventListener('submit', function() { saveSearchToHistory(); });
+
   function filterCompanies() {
     const city = document.getElementById('cityFilter').value;
     const sector = document.getElementById('sectorFilter').value;
@@ -199,72 +346,13 @@
     });
   }
 
-  function toggleListMenu(companyId) {
-    // close other menus
-    document.querySelectorAll("[id^='listMenu-']").forEach(menu => {
-      if (menu.id !== `listMenu-${companyId}`) menu.classList.add("hidden");
-    });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelectorAll("dialog").forEach(d => d.close()); });
 
-    const menu = document.getElementById(`listMenu-${companyId}`);
-    const btn  = document.getElementById(`listMenuBtn-${companyId}`);
-    if (!menu || !btn) return;
-
-    const isHidden = menu.classList.contains("hidden");
-    if (!isHidden) {
-      menu.classList.add("hidden");
-      return;
-    }
-
-    menu.classList.remove("hidden");
-    menu.style.visibility = "hidden";
-    menu.style.left = "0px";
-    menu.style.top = "0px";
-
-    const btnRect = btn.getBoundingClientRect();
-    const menuRect = menu.getBoundingClientRect();
-    const gap = 8;
-
-    let left = btnRect.right - menuRect.width;
-    let top  = btnRect.bottom + gap;
-
-    left = Math.max(8, Math.min(left, window.innerWidth - menuRect.width - 8));
-
-    const spaceBelow = window.innerHeight - btnRect.bottom;
-    if (spaceBelow < menuRect.height + gap) {
-      top = btnRect.top - menuRect.height - gap;
-      top = Math.max(8, top);
-    }
-
-    menu.style.left = `${left}px`;
-    menu.style.top = `${top}px`;
-    menu.style.visibility = "visible";
-  }
-
-  document.addEventListener("click", (e) => {
-    const isTrigger = e.target.closest("[id^='listMenuBtn-']");
-    const isMenu = e.target.closest("[id^='listMenu-']");
-    if (!isTrigger && !isMenu) {
-      document.querySelectorAll("[id^='listMenu-']").forEach(menu => menu.classList.add("hidden"));
+  document.addEventListener('DOMContentLoaded', function() {
+    renderHistory();
+    const results = document.getElementById('quickFilters');
+    if (results) {
+      setTimeout(() => { results.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 300);
     }
   });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      document.querySelectorAll("[id^='listMenu-']").forEach(menu => menu.classList.add("hidden"));
-    }
-  });
-
-  window.addEventListener("resize", () => {
-    document.querySelectorAll("[id^='listMenu-']").forEach(menu => menu.classList.add("hidden"));
-  });
-
-  document.addEventListener("turbo:submit-end", () => {
-    document.querySelectorAll("[id^='listMenu-']").forEach(menu =>
-    menu.classList.add("hidden")
-    );
-  });
-
-  window.addEventListener("scroll", () => {
-    document.querySelectorAll("[id^='listMenu-']").forEach(menu => menu.classList.add("hidden"));
-  }, { passive: true });
 </script>
