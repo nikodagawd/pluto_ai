@@ -198,4 +198,73 @@
       card.style.display = matchCity && matchSector ? "flex" : "none";
     });
   }
+
+  function toggleListMenu(companyId) {
+    // close other menus
+    document.querySelectorAll("[id^='listMenu-']").forEach(menu => {
+      if (menu.id !== `listMenu-${companyId}`) menu.classList.add("hidden");
+    });
+
+    const menu = document.getElementById(`listMenu-${companyId}`);
+    const btn  = document.getElementById(`listMenuBtn-${companyId}`);
+    if (!menu || !btn) return;
+
+    const isHidden = menu.classList.contains("hidden");
+    if (!isHidden) {
+      menu.classList.add("hidden");
+      return;
+    }
+
+    menu.classList.remove("hidden");
+    menu.style.visibility = "hidden";
+    menu.style.left = "0px";
+    menu.style.top = "0px";
+
+    const btnRect = btn.getBoundingClientRect();
+    const menuRect = menu.getBoundingClientRect();
+    const gap = 8;
+
+    let left = btnRect.right - menuRect.width;
+    let top  = btnRect.bottom + gap;
+
+    left = Math.max(8, Math.min(left, window.innerWidth - menuRect.width - 8));
+
+    const spaceBelow = window.innerHeight - btnRect.bottom;
+    if (spaceBelow < menuRect.height + gap) {
+      top = btnRect.top - menuRect.height - gap;
+      top = Math.max(8, top);
+    }
+
+    menu.style.left = `${left}px`;
+    menu.style.top = `${top}px`;
+    menu.style.visibility = "visible";
+  }
+
+  document.addEventListener("click", (e) => {
+    const isTrigger = e.target.closest("[id^='listMenuBtn-']");
+    const isMenu = e.target.closest("[id^='listMenu-']");
+    if (!isTrigger && !isMenu) {
+      document.querySelectorAll("[id^='listMenu-']").forEach(menu => menu.classList.add("hidden"));
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      document.querySelectorAll("[id^='listMenu-']").forEach(menu => menu.classList.add("hidden"));
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    document.querySelectorAll("[id^='listMenu-']").forEach(menu => menu.classList.add("hidden"));
+  });
+
+  document.addEventListener("turbo:submit-end", () => {
+    document.querySelectorAll("[id^='listMenu-']").forEach(menu =>
+    menu.classList.add("hidden")
+    );
+  });
+
+  window.addEventListener("scroll", () => {
+    document.querySelectorAll("[id^='listMenu-']").forEach(menu => menu.classList.add("hidden"));
+  }, { passive: true });
 </script>

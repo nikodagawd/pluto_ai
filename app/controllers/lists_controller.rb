@@ -1,5 +1,6 @@
 class ListsController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_list, only: [:show, :destroy]
 
   def index
     @list  = current_user.lists.new
@@ -14,7 +15,6 @@ class ListsController < ApplicationController
   end
 
   def show
-    @list = current_user.lists.find(params[:id])
     @companies = @list.companies
 
     respond_to do |format|
@@ -67,12 +67,15 @@ class ListsController < ApplicationController
   end
 
   def destroy
-    @list = current_user.lists.find(params[:id])
     @list.destroy
-    redirect_to lists_path, notice: 'List deleted successfully'
+    redirect_to lists_path, notice: "List deleted."
   end
 
   private
+
+  def set_list
+    @list = current_user.lists.find(params[:id])
+  end
 
   def list_params
     params.require(:list).permit(:name)

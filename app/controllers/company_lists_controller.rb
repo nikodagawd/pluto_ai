@@ -7,22 +7,26 @@ class CompanyListsController < ApplicationController
 
     respond_to do |format|
       if @company_list.save
-        format.html { redirect_to @list, notice: "Company added to list." }
+        format.turbo_stream
+        format.html { redirect_back fallback_location: lists_path, notice: "Company added ✅" }
         format.json { render json: @company_list, status: :created }
       else
-        format.html { redirect_to @list, alert: "Could not add company to list." }
+        format.html { redirect_back fallback_location: lists_path, alert: "Could not add company." }
         format.json { render json: @company_list.errors, status: :unprocessable_entity }
       end
     end
   end
 
   def destroy
-    @list = current_user.lists.find(params[:list_id])
-    @company_list = @list.company_lists.find(params[:id])
+     @company_list = CompanyList
+      .joins(:list)
+      .where(lists: { user_id: current_user.id })
+      .find(params[:id])
+
     @company_list.destroy
 
     respond_to do |format|
-      format.html { redirect_to @list, notice: "Company removed from list." }
+      format.html { redirect_back fallback_location: lists_path, notice: "Company removed from list ✅" }
       format.json { head :no_content }
     end
   end

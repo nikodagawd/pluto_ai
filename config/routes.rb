@@ -13,5 +13,5 @@ Rails.application.routes.draw do
   get '/pricing', to: 'pricing#index'
 
   resources :lists, only: [:index, :show, :create, :destroy]
-  resources :company_lists, only: [:create, :destroy]
+  resources :company_lists, only: %i[create destroy]
 end
