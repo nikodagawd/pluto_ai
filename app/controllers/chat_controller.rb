@@ -1,10 +1,10 @@
 class ChatController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, only: [:create]
 
   def index
     @companies = []
     @is_recommendation = false
-    @lists =current_user.lists.order(created_at: :desc)
+    @lists = user_signed_in? ? current_user.lists.order(created_at: :desc) : []
   end
 
   def create

@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users
-  root "pages#welcome"
+  root "lists#index"
   get "/login", to: "devise/sessions#new", as: :login
   get "/signup", to: "pages#signup", as: :signup
   get "/goodbye", to: "pages#goodbye", as: :goodbye
