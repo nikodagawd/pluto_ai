@@ -3,9 +3,8 @@ class OrdersController < ApplicationController
 
   # Pricing (in cents) - wie in Lecture
   PRICES = {
-    'starter' => 990,      # 9.90 EUR
-    'pro' => 2990,         # 29.90 EUR
-    'enterprise' => 9990   # 99.90 EUR
+    'starter' => 3000,  # 30 EUR
+    'pro'     => 10000  # 100 EUR
   }
 
   def create
