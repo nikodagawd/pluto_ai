@@ -6,7 +6,6 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <!-- Solo el stylesheet principal -->
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
@@ -14,9 +13,6 @@
 
   <body class="bg-gray-50 font-sans text-gray-800">
     <%= render "shared/navbar" %>
-    <header class="bg-white shadow p-4">
-      <h1 class="text-2xl font-bold text-center">AI-Powered Company Explorer</h1>
-    </header>
 
     <main class="container mx-auto mt-6 px-4">
       <%= yield %>
@@ -27,3 +23,4 @@
     </footer>
   </body>
 </html>
+
