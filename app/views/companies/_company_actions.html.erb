@@ -2,24 +2,30 @@
      class="absolute top-4 right-4 z-20"
      onclick="event.stopPropagation();">
 
-  <button type="button"
-          class="h-8 w-8 flex items-center justify-center rounded-full border border-gray-300 bg-white text-indigo-600 hover:bg-indigo-50 font-bold shadow-sm transition-transform hover:scale-110"
+  <div class="flex items-center gap-2">
+    <% if added_list_name.present? %>
+      <div class="text-[10px] font-bold text-gray-700 whitespace-nowrap">
+        ✓ Already added to <span class="text-indigo-600"><%= added_list_name %></span>
+      </div>
+    <% end %>
+
+    <button type="button"
+          class="h-8 w-8 flex items-center justify-center rounded-full
+                 border border-[#E9D3FF] bg-white text-[#B143FF]
+                 hover:bg-[#FFF4F4] font-bold shadow-sm transition
+                 hover:scale-110"
           onclick="toggleListDropdown(<%= company.id %>, event)">
     +
-  </button>
-
-  <% if added_list_name.present? %>
-    <div class="mt-2 text-[10px] font-bold text-gray-700 whitespace-nowrap">
-      ✓ Already added to <span class="text-indigo-600"><%= added_list_name %></span>
-    </div>
-  <% end %>
+    </button>
+  </div>
 
   <div id="listDropdown-<%= company.id %>"
-       class="hidden absolute right-0 mt-2 w-56 rounded-xl border border-gray-200 bg-white shadow-lg overflow-hidden">
+       class="hidden absolute right-0 mt-3 w-60 rounded-2xl border border-[#E9D3FF] bg-white shadow-xl overflow-hidden">
 
     <% if user_signed_in? %>
+
       <% if @lists.present? %>
-        <div class="px-3 py-2 text-[10px] font-black uppercase tracking-widest text-gray-400 border-b">
+        <div class="px-4 py-2 text-xs font-bold uppercase tracking-wide text-black bg-[#FFF4F4] border-b border-[#E9D3FF]">
           Add to list
         </div>
 
@@ -28,26 +34,31 @@
                 method: :post,
                 params: { list_id: list.id, company_id: company.id },
                 form: { class: "m-0", data: { turbo_stream: true } },
-                class: "w-full text-left px-3 py-2 text-sm hover:bg-gray-50" do %>
+                class: "w-full text-left px-4 py-2.5 text-sm text-black hover:bg-[#FFF4F4] transition" do %>
             <%= list.name %>
           <% end %>
         <% end %>
+
       <% else %>
         <div class="px-3 py-2 text-[10px] font-black uppercase tracking-widest text-gray-400 border-b">
           No lists yet
         </div>
+      <% end %>
 
+      <div class="border-t bg-white">
         <%= button_to lists_path,
               method: :post,
               params: { name: "Favorites", company_id: company.id },
               form: { class: "m-0", data: { turbo_stream: true } },
-              class: "w-full text-left px-3 py-2 text-sm hover:bg-gray-50" do %>
+              class: "w-full text-left px-4 py-2.5 text-sm font-semibold text-[#B143FF] hover:bg-[#E9D3FF]/40 transition" do %>
           Create list
         <% end %>
-      <% end %>
+      </div>
+
     <% else %>
       <div class="p-3 text-sm text-gray-700">
         Sign in to save companies.
+
         <div class="mt-2">
           <%= link_to "Sign in", login_path,
                 class: "inline-block rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500" %>
