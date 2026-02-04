@@ -1,35 +1,39 @@
-<div class="min-h-screen bg-[#fdf5e6] flex flex-col items-center py-10 px-4">
-  <div class="max-w-4xl w-full">
+<body style="margin:0;">
+  <div class="min-h-screen flex flex-col items-center w-full"
+       style="
+         background-blend-mode: normal;
+         background-attachment: fixed;
+         padding-top: 40px;">
 
-    <div class="text-center mb-12">
-      <p class="text-xl md:text-2xl text-black font-semibold flex items-center justify-center gap-2">
-        🔍 AI-Powered Discovery
-      </p>
-      <h1 class="text-5xl md:text-6xl font-bold text-black mt-4">
-        Company Explorer
-      </h1>
-      <p class="mt-6 text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-tight">
-        <span class="block mb-2 text-black font-medium"> Ask our AI to find innovative companies. </span>
-        <span class="text-gray-500 text-base md:text-lg">
-          Use natural language to search by <span class="text-indigo-600">sector</span>, <span class="text-indigo-600">location</span> and <span class="text-indigo-600">funding</span>.
-        </span>
-      </p>
-    </div>
+    <div class="max-w-4xl w-full">
+      <div class="text-center mb-12">
+        <p class="text-xl md:text-2xl text-black font-semibold flex items-center justify-center gap-2">
+          🔍 AI-Powered Discovery
+        </p>
+        <h1 class="text-5xl md:text-6xl font-bold text-black mt-4">
+          Company Explorer
+        </h1>
+        <p class="mt-6 text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-tight">
+          <span class="block mb-2 text-black font-medium"> Ask our AI to find innovative companies. </span>
+          <span class="text-gray-500 text-base md:text-lg">
+            Use natural language to search by <span class="text-indigo-600">sector</span>, <span class="text-indigo-600">location</span> and <span class="text-indigo-600">funding</span>.
+          </span>
+        </p>
+      </div>
 
-    <div class="w-full bg-white rounded-xl shadow-lg p-8 flex flex-col relative z-40">
-
-      <%= form_with url: chat_path, method: :post, local: true, data: { turbo: false }, class: "w-full mb-2", id: "chatForm" do |f| %>
-        <div class="relative border border-gray-300 rounded-xl focus-within:ring-2 focus-within:ring-indigo-500 bg-gray-50 p-4">
-          <%= f.text_area :message, value: @message, placeholder: "What would you like to know?", id: "chatInput",
-              class: "w-full bg-transparent border-none p-0 text-gray-700 placeholder-gray-400 outline-none resize-none min-h-[80px] text-lg" %>
-          <div class="absolute bottom-3 right-3">
-            <%= f.submit "Send", class: "bg-indigo-600 text-white px-8 py-2.5 rounded-lg hover:bg-indigo-700 font-bold cursor-pointer transition-colors shadow-md" %>
+      <div class="w-full bg-white rounded-xl shadow-lg p-8 flex flex-col relative z-40">
+        <%= form_with url: chat_path, method: :post, local: true, data: { turbo: false }, class: "w-full mb-2", id: "chatForm" do |f| %>
+          <div class="relative border border-gray-300 rounded-xl focus-within:ring-2 focus-within:ring-indigo-500 bg-gray-50 p-4">
+            <%= f.text_area :message, value: @message, placeholder: "What would you like to know?", id: "chatInput",
+                class: "w-full bg-transparent border-none p-0 text-gray-700 placeholder-gray-400 outline-none resize-none min-h-[80px] text-lg" %>
+            <div class="absolute bottom-3 right-3">
+              <%= f.submit "Send", class: "bg-indigo-600 text-white px-8 py-2.5 rounded-lg hover:bg-indigo-700 font-bold cursor-pointer transition-colors shadow-md" %>
+            </div>
           </div>
-        </div>
-      <% end %>
+        <% end %>
 
-      <div class="flex items-center gap-4 w-full px-1 mb-2 mt-2 relative z-50">
-        <input type="file" id="fileUploadInput" class="hidden">
+        <div class="flex items-center gap-4 w-full px-0 mb-2 mt-2 relative z-50">
+          <input type="file" id="fileUploadInput" class="hidden">
 
         <button type="button" onclick="document.getElementById('fileUploadInput').click()" class="text-gray-400 hover:text-indigo-600 transition-colors" title="Attach Document">
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.51a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
@@ -40,14 +44,17 @@
         </button>
 
         <div class="relative inline-block ml-2">
-          <button type="button" onclick="toggleSavedSearches()" id="savedSearchesBtn" class="flex items-center gap-2 bg-[#fdf5e6] border-2 border-black px-3 py-1.5 rounded-lg text-xs font-bold text-black hover:bg-[#f5e6d3] transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[1px] active:translate-y-[1px]">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            Saved History
-          </button>
+  <button type="button" onclick="toggleSavedSearches()" id="savedSearchesBtn" class="flex items-center gap-2 bg-indigo-50 border-2 border-indigo-500 px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,0.8)] active:shadow-none active:translate-x-[1px] active:translate-y-[1px]">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <polyline points="12 6 12 12 16 14"/>
+    </svg>
+    Saved History
+  </button>
 
-          <div id="savedSearchesMenu" class="hidden absolute left-0 top-full mt-2 w-80 bg-[#fdf5e6] border-2 border-black rounded-xl shadow-[6px_6px_0px_0px_rgba(0,0,0,0.8)] z-[100] overflow-hidden">
-            <div class="p-2 border-b-2 border-black bg-white flex justify-between items-center">
-              <span class="text-[10px] font-black uppercase tracking-tight">Recent Activity</span>
+  <div id="savedSearchesMenu" class="hidden absolute left-0 top-full mt-2 w-80 bg-indigo-50 border-2 border-indigo-500 rounded-xl shadow-[6px_6px_0px_0px_rgba(0,0,0,0.8)] z-[100] overflow-hidden">
+    <div class="p-2 border-b-2 border-indigo-500 bg-white flex justify-between items-center">
+      <span class="text-[10px] font-black uppercase tracking-tight">Recent Activity</span>
               <button type="button" onclick="clearAllHistory()" class="text-[10px] text-red-600 font-bold hover:underline">Clear all</button>
             </div>
             <div id="historyItemsContainer" class="history-scroll-box custom-scrollbar">
@@ -55,6 +62,7 @@
           </div>
         </div>
       </div>
+
 
       <% if @companies.present? %>
         <div id="quickFilters" class="flex flex-row items-center gap-2 mt-6 overflow-x-auto pb-2 no-scrollbar border-t border-gray-100 pt-6">
