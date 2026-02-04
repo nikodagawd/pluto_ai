@@ -7,10 +7,11 @@ class CompanyListsController < ApplicationController
 
     respond_to do |format|
       if @company_list.save
-        format.turbo_stream
+        format.turbo_stream { render :create }
         format.html { redirect_back fallback_location: lists_path, notice: "Company added ✅" }
         format.json { render json: @company_list, status: :created }
       else
+        format.turbo_stream { head :unprocessable_entity }
         format.html { redirect_back fallback_location: lists_path, alert: "Could not add company." }
         format.json { render json: @company_list.errors, status: :unprocessable_entity }
       end
