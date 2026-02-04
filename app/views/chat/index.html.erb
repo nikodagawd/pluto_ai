@@ -74,8 +74,10 @@
         </div>
 
         <div id="companiesGrid" class="flex flex-col gap-6 mt-6 items-center w-full pb-10">
-          <% @companies.each do |company| %>
+          <% @companies.each_with_index do |company, index| %>
             <div class="company-card hover-card relative w-full max-w-3xl bg-white rounded-xl border border-gray-200 shadow-sm p-6 flex flex-row justify-between cursor-pointer"
+                 data-index="<%= index %>"
+                 <% if index >= 10 %>style="display:none"<% end %>
                  data-city="<%= company.city %>"
                  data-sector="<%= company.sector %>"
                  onclick="document.getElementById('modal-<%= company.id %>').showModal()">
@@ -140,7 +142,7 @@
                 <p class="text-sm text-gray-600 line-clamp-2"><%= company.description %></p>
                 <div class="flex flex-wrap gap-2">
                   <span class="px-2 py-0.5 text-[11px] bg-indigo-50 text-indigo-700 rounded-full font-medium"><%= company.sector %></span>
-                  <span class="px-2 py-0.5 text-[11px] bg-gray-100 text-gray-600 rounded-full font-medium">B2B</span>
+                  <span class="px-2 py-0.5 text-[11px] bg-gray-100 text-gray-600 rounded-full font-medium"><%= company.sub_sector %></span>
                 </div>
                 <div class="flex flex-col gap-1.5 mt-2">
                   <div class="flex items-center gap-2 text-sm text-gray-500">
@@ -157,11 +159,11 @@
               <div class="flex flex-col justify-center gap-4 pl-6 border-l border-gray-100 w-1/3">
                 <div class="flex items-center gap-2 text-sm text-gray-700">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-indigo-500"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-                  <span class="font-medium"><%= company.employees %> employees</span>
+                  <span class="font-medium"><%= company.employees.present? && company.employees > 0 ? company.employees : '<5' %> employees</span>
                 </div>
                 <div class="flex items-center gap-2 text-sm text-gray-700">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-500"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="14 7 21 7 21 14"></polyline></svg>
-                  <span class="font-medium">€<%= number_to_human(company.revenue, units: { million: 'M' }) %> revenue</span>
+                  <span class="font-medium"><%= display_revenue(company.revenue) %> revenue</span>
                 </div>
               </div>
             </div>
@@ -177,24 +179,24 @@
                       <h2 class="text-xl font-bold text-gray-900 leading-tight truncate"><%= company.company_name %></h2>
                       <div class="px-3 py-1 rounded-full font-bold text-[10px] uppercase tracking-wider border shadow-sm"
                            style="background-color: #ecfdf5; color: #065f46; border-color: #d1fae5;">
-                        €<%= number_to_human(company.revenue, units: { million: 'M' }) %> REVENUE
+                        <%= display_revenue(company.revenue) %> REVENUE
                       </div>
                     </div>
-                    <p class="text-[11px] text-gray-500 font-medium italic"><%= company.description.truncate(100) %></p>
+                    <p class="text-[11px] text-gray-500 font-medium italic"><%= company.description %></p>
                   </div>
                   <button onclick="document.getElementById('modal-<%= company.id %>').close()" class="text-gray-400 hover:text-gray-600 text-3xl font-light leading-none">&times;</button>
                 </div>
 
                 <div class="flex gap-2 -mt-4">
                   <span class="px-2 py-0.5 text-[10px] bg-indigo-50 text-indigo-700 rounded-full font-medium"><%= company.sector %></span>
-                  <span class="px-2 py-0.5 text-[10px] bg-gray-100 text-gray-600 rounded-full font-medium">B2B</span>
+                  <span class="px-2 py-0.5 text-[10px] bg-gray-100 text-gray-600 rounded-full font-medium"><%= company.sub_sector %></span>
                 </div>
 
                 <div>
                   <h3 class="text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-2">Company Details</h3>
                   <div class="flex gap-3">
                     <div class="px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl flex-1 flex flex-col justify-center shadow-sm">
-                      <p class="text-[11px] font-bold text-gray-800 leading-tight"><%= company.owner rescue 'Jane Doe' %></p>
+                      <p class="text-[11px] font-bold text-gray-800 leading-tight"><%= company.owner.present? ? company.owner : 'n/a' %></p>
                       <p class="text-[9px] font-medium text-gray-400 uppercase tracking-tighter">Owner / CEO</p>
                     </div>
                     <div class="px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl flex-1 flex flex-col justify-center shadow-sm">
@@ -231,7 +233,7 @@
                         <span class="h-1 w-1 bg-indigo-500 rounded-full"></span> AI Insight
                       </h4>
                       <p class="text-[11px] text-gray-700 leading-relaxed font-medium">
-                        <%= company.company_name %> shows high potential in <%= company.sector %>. The current team structure supports expansion in <%= company.city %>.
+                        <%= company.popup_bio %>
                       </p>
                     </div>
                     <a href="https://<%= company.company_name.parameterize %>.com" target="_blank" class="flex items-center justify-between px-3 py-2 border border-gray-100 rounded-xl hover:bg-gray-100 transition-all bg-gray-50 group">
@@ -247,6 +249,16 @@
             </dialog>
           <% end %>
         </div>
+
+        <% if @companies.size > 10 %>
+          <div id="loadMoreContainer" class="flex flex-col items-center gap-2 mt-2 mb-6">
+            <p id="showingCount" class="text-sm text-gray-500 font-medium">Showing 10 of <%= @companies.size %></p>
+            <button type="button" id="loadMoreBtn" onclick="loadMoreCards()"
+                    class="bg-indigo-600 text-white px-8 py-2.5 rounded-lg hover:bg-indigo-700 font-bold cursor-pointer transition-colors shadow-md">
+              Load More
+            </button>
+          </div>
+        <% end %>
       <% end %>
     </div>
   </div>
@@ -385,14 +397,75 @@
 
   document.getElementById('chatForm').addEventListener('submit', function() { saveSearchToHistory(); });
 
+  let visibleBatch = 10;
+
   function filterCompanies() {
     const city = document.getElementById('cityFilter').value;
     const sector = document.getElementById('sectorFilter').value;
+    const hasFilter = city !== "" || sector !== "";
+
+    let visibleCount = 0;
+    let totalMatching = 0;
+
     document.querySelectorAll('.company-card').forEach(card => {
       const matchCity = city === "" || card.getAttribute('data-city') === city;
       const matchSector = sector === "" || card.getAttribute('data-sector') === sector;
-      card.style.display = matchCity && matchSector ? "flex" : "none";
+
+      if (!matchCity || !matchSector) {
+        card.style.display = "none";
+      } else {
+        totalMatching++;
+        if (hasFilter) {
+          // When filters are active, show all matching cards
+          card.style.display = "flex";
+          visibleCount++;
+        } else {
+          // No filter — respect the load-more batch
+          const idx = parseInt(card.getAttribute('data-index'));
+          if (idx < visibleBatch) {
+            card.style.display = "flex";
+            visibleCount++;
+          } else {
+            card.style.display = "none";
+          }
+        }
+      }
     });
+
+    updateLoadMoreUI(visibleCount, totalMatching, hasFilter);
+  }
+
+  function loadMoreCards() {
+    const previousBatch = visibleBatch;
+    visibleBatch += 10;
+    filterCompanies();
+
+    // Scroll to the first newly revealed card
+    const firstNew = document.querySelector(`.company-card[data-index="${previousBatch}"]`);
+    if (firstNew && firstNew.style.display !== "none") {
+      firstNew.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function updateLoadMoreUI(visibleCount, totalMatching, hasFilter) {
+    const container = document.getElementById('loadMoreContainer');
+    if (!container) return;
+
+    const countEl = document.getElementById('showingCount');
+    const btn = document.getElementById('loadMoreBtn');
+
+    if (hasFilter || visibleCount >= totalMatching) {
+      // Hide load-more when filters are active or all cards visible
+      if (hasFilter) {
+        countEl.textContent = `Showing ${totalMatching} of ${totalMatching} (filtered)`;
+      } else {
+        countEl.textContent = `Showing ${visibleCount} of ${totalMatching}`;
+      }
+      btn.style.display = "none";
+    } else {
+      countEl.textContent = `Showing ${visibleCount} of ${totalMatching}`;
+      btn.style.display = "inline-block";
+    }
   }
 
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelectorAll("dialog").forEach(d => d.close()); });
