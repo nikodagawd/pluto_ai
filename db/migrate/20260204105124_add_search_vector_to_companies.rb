@@ -1,5 +1,7 @@
 class AddSearchVectorToCompanies < ActiveRecord::Migration[7.1]
   def up
+    enable_extension "pg_trgm"
+
     # Add the tsvector column
     add_column :companies, :search_vector, :tsvector
 
