@@ -191,9 +191,9 @@
                         <%= company.popup_bio %>
                       </p>
                     </div>
-                    <a href="https://<%= company.company_name.parameterize %>.com" target="_blank" class="flex items-center justify-between px-3 py-2 border border-gray-100 rounded-xl hover:bg-gray-100 transition-all bg-gray-50 group">
+                    <a href="<%= company.website.present? ? (company.website.start_with?('http') ? company.website : "https://#{company.website}") : '#' %>" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between px-3 py-2 border border-gray-100 rounded-xl hover:bg-gray-100 transition-all bg-gray-50 group">
                       <div class="flex flex-col">
-                        <span class="text-gray-600 text-[9px] font-bold truncate tracking-tight"><%= company.company_name.parameterize %>.com</span>
+                        <span class="text-gray-600 text-[9px] font-bold truncate tracking-tight"><%= company.website.present? ? company.website.gsub(%r{\Ahttps?://}, '') : 'No website' %></span>
                         <span class="text-[7px] font-bold text-gray-500 uppercase tracking-tighter">view official website</span>
                       </div>
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400 group-hover:text-gray-600 transition-colors"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
