@@ -1,7 +1,5 @@
-<%= turbo_stream.replace "company_save_#{@company_list.company_id}" do %>
-  <div class="absolute top-3 right-3 z-50">
-    <div class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-green-200 bg-green-50 text-green-700 font-bold shadow-sm">
-      ✓
-    </div>
-  </div>
+<%= turbo_stream.replace "company-actions-#{@company_list.company_id}" do %>
+  <%= render partial: "companies/company_actions",
+             locals: { company: Company.find(@company_list.company_id),
+                       added_list_name: @list.name } %>
 <% end %>
