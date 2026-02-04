@@ -34,13 +34,13 @@
                 method: :post,
                 params: { list_id: list.id, company_id: company.id },
                 form: { class: "m-0", data: { turbo_stream: true } },
-                class: "w-full text-left px-4 py-2.5 text-sm text-black hover:bg-[#FFF4F4] transition" do %>
+                class: "w-full text-left px-4 py-2.5 text-sm text-black hover:bg-[#FFF4F4] transition cursor-pointer" do %>
             <%= list.name %>
           <% end %>
         <% end %>
 
       <% else %>
-        <div class="px-3 py-2 text-[10px] font-black uppercase tracking-widest text-gray-400 border-b">
+        <div class="px-3 py-2 text-[10px] font-black uppercase tracking-widest text-gray-400 border-b pointer-events-none cursor-default">
           No lists yet
         </div>
       <% end %>
@@ -50,7 +50,7 @@
               method: :post,
               params: { name: "Favorites", company_id: company.id },
               form: { class: "m-0", data: { turbo_stream: true } },
-              class: "w-full text-left px-4 py-2.5 text-sm font-semibold text-[#B143FF] hover:bg-[#E9D3FF]/40 transition" do %>
+              class: "w-full text-left px-4 py-2.5 text-sm font-semibold text-[#B143FF] hover:bg-[#E9D3FF]/40 transition cursor-pointer" do %>
           Create list
         <% end %>
       </div>
