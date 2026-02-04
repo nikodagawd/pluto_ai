@@ -83,6 +83,7 @@
 
         <div id="companiesGrid" class="flex flex-col gap-6 mt-6 items-center w-full pb-10">
           <% @companies.each_with_index do |company, index| %>
+          <% domain = company.website.present? ? company.website.gsub(%r{\Ahttps?://}, '').split('/').first : nil %>
             <div class="company-card hover-card relative w-full max-w-3xl bg-white rounded-xl border border-gray-200 shadow-sm p-6 flex flex-row justify-between cursor-pointer"
                  data-index="<%= index %>"
                  <% if index >= 10 %>style="display:none"<% end %>
@@ -93,7 +94,18 @@
               <%= render partial: "companies/company_actions", locals: { company: company, added_list_name: nil } %>
 
               <div class="flex flex-col gap-3 pr-12 w-2/3">
-                <h2 class="text-xl font-bold text-gray-900 leading-tight truncate"><%= company.company_name %></h2>
+                <div class="flex items-center gap-4 mb-2">
+  <% if domain.present? %>
+    <div style="width: 36px; height: 36px; min-width: 36px; max-width: 36px; min-height: 36px; max-height: 36px;"
+         class="flex-none rounded-lg bg-white shadow-sm border border-gray-100 overflow-hidden flex items-center justify-center">
+      <img src="https://www.google.com/s2/favicons?domain=<%= domain %>&sz=128"
+           style="width: 100%; height: 100%; object-fit: contain; display: block; padding: 4px;"
+           onload="if(this.naturalWidth <= 16) this.parentElement.remove();"
+           onerror="this.parentElement.remove()">
+    </div>
+  <% end %>
+  <h2 class="text-xl font-bold text-gray-900 leading-tight truncate"><%= company.company_name %></h2>
+</div>
                 <p class="text-sm text-gray-600 line-clamp-2"><%= company.description %></p>
                 <div class="flex flex-wrap gap-2">
                   <span class="px-2 py-0.5 text-[11px] bg-indigo-50 text-indigo-700 rounded-full font-medium"><%= company.sector %></span>
@@ -129,16 +141,25 @@
 
               <div class="bg-white p-8 flex flex-col gap-6">
                 <div class="flex justify-between items-start">
-                  <div class="flex flex-col gap-1.5 w-2/3">
-                    <div class="flex items-center gap-3">
-                      <h2 class="text-xl font-bold text-gray-900 leading-tight truncate"><%= company.company_name %></h2>
-                      <div class="px-3 py-1 rounded-full font-bold text-[10px] uppercase tracking-wider border shadow-sm"
-                           style="background-color: #ecfdf5; color: #065f46; border-color: #d1fae5;">
-                        <%= display_revenue(company.revenue) %> REVENUE
-                      </div>
-                    </div>
-                    <p class="text-[11px] text-gray-500 font-medium italic"><%= company.description %></p>
-                  </div>
+                 <div class="flex flex-col gap-1.5 w-full">
+  <div class="flex items-center gap-3">
+    <% if domain.present? %>
+      <div style="width: 35px; height: 35px; min-width: 35px; max-width: 35px; min-height: 35px; max-height: 35px;"
+           class="flex-none rounded-lg bg-white shadow-sm border border-gray-100 overflow-hidden flex items-center justify-center p-1">
+        <img src="https://www.google.com/s2/favicons?domain=<%= domain %>&sz=128"
+             style="width: 100%; height: 100%; object-fit: contain; display: block;"
+             onload="if(this.naturalWidth <= 16) this.parentElement.remove();"
+             onerror="this.parentElement.remove()">
+      </div>
+    <% end %>
+    <h2 class="text-xl font-bold text-gray-900 leading-tight truncate"><%= company.company_name %></h2>
+    <div class="px-3 py-1 rounded-full font-bold text-[10px] uppercase tracking-wider border shadow-sm"
+         style="background-color: #ecfdf5; color: #065f46; border-color: #d1fae5;">
+      <%= display_revenue(company.revenue) %> REVENUE
+    </div>
+  </div>
+  <p class="text-[11px] text-gray-500 font-medium italic"><%= company.description %></p>
+</div>
                   <button onclick="document.getElementById('modal-<%= company.id %>').close()" class="text-gray-400 hover:text-gray-600 text-3xl font-light leading-none">&times;</button>
                 </div>
 
