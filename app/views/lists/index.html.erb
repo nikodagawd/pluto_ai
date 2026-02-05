@@ -42,18 +42,21 @@
                   <% list.company_lists.each do |company_list| %>
                     <% company = company_list.company %>
 
-                    <div class="bg-white rounded-lg p-4 border border-gray-200 flex flex-col">
+                    <div class="bg-white rounded-lg p-4 border border-gray-200 flex flex-col cursor-pointer hover:border-indigo-400 hover:shadow-md transition-all"
+                         onclick="document.getElementById('list-modal-<%= company.id %>').showModal()">
                       <div class="flex items-start justify-between gap-3">
                         <div>
-                          <strong class="text-lg text-indigo-900 mb-1 block"><%= company.company_name %></strong>
+                          <strong class="text-lg text-indigo-900 mb-1 block hover:underline"><%= company.company_name %></strong>
                           <small class="text-gray-600 mb-2 block"><%= company.sector %> · <%= company.city %></small>
                         </div>
 
-                        <%= button_to "Remove",
-                              company_list_path(company_list),
-                              method: :delete,
-                              form: { data: { turbo_confirm: "Remove this favorite?" } },
-                              class: "text-xs font-semibold text-red-600 hover:text-red-700" %>
+                        <div onclick="event.stopPropagation()">
+                          <%= button_to "Remove",
+                                company_list_path(company_list),
+                                method: :delete,
+                                form: { data: { turbo_confirm: "Remove this favorite?" } },
+                                class: "text-xs font-semibold text-red-600 hover:text-red-700" %>
+                        </div>
                       </div>
 
                       <p class="text-sm text-gray-700 mb-3 line-clamp-3"><%= company.description %></p>
@@ -63,6 +66,87 @@
                         <span>Founded in <%= company.founded_year %></span>
                       </small>
                     </div>
+
+                    <% domain = company.website.present? ? company.website.gsub(%r{\Ahttps?://}, '').split('/').first : nil %>
+                    <dialog id="list-modal-<%= company.id %>"
+                            style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);"
+                            class="z-[100] m-0 w-[95%] max-w-2xl rounded-2xl border-none p-0 shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-sm overflow-hidden">
+                      <div class="bg-white p-8 flex flex-col gap-6">
+                        <div class="flex justify-between items-start">
+                          <div class="flex flex-col gap-1.5 w-full">
+                            <div class="flex items-center gap-3">
+                              <% if domain.present? %>
+                                <div style="width: 35px; height: 35px; min-width: 35px;" class="flex-none rounded-lg bg-white shadow-sm border border-gray-100 overflow-hidden flex items-center justify-center p-1">
+                                  <img src="https://www.google.com/s2/favicons?domain=<%= domain %>&sz=128" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.parentElement.remove()">
+                                </div>
+                              <% end %>
+                              <h2 class="text-xl font-bold text-gray-900 leading-tight truncate"><%= company.company_name %></h2>
+                              <div class="px-3 py-1 rounded-full font-bold text-[10px] uppercase tracking-wider border shadow-sm" style="background-color: #ecfdf5; color: #065f46; border-color: #d1fae5;">
+                                <%= display_revenue(company.revenue) %> REVENUE
+                              </div>
+                            </div>
+                            <p class="text-[11px] text-gray-500 font-medium italic"><%= company.description %></p>
+                          </div>
+                          <button onclick="document.getElementById('list-modal-<%= company.id %>').close()" class="text-gray-400 hover:text-gray-600 text-3xl font-light leading-none">&times;</button>
+                        </div>
+
+                        <div class="flex gap-2 -mt-4">
+                          <span class="px-2 py-0.5 text-[10px] bg-indigo-50 text-indigo-700 rounded-full font-medium"><%= company.sector %></span>
+                          <span class="px-2 py-0.5 text-[10px] bg-gray-100 text-gray-600 rounded-full font-medium"><%= company.sub_sector %></span>
+                        </div>
+
+                        <div>
+                          <h3 class="text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-2">Company Details</h3>
+                          <div class="flex gap-3">
+                            <div class="px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl flex-1 flex flex-col justify-center shadow-sm">
+                              <p class="text-[11px] font-bold text-gray-800 leading-tight"><%= company.owner.present? ? company.owner : 'n/a' %></p>
+                              <p class="text-[9px] font-medium text-gray-400 uppercase tracking-tighter">Owner / CEO</p>
+                            </div>
+                            <div class="px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl flex-1 flex flex-col justify-center shadow-sm">
+                              <p class="text-[11px] font-bold text-gray-800 leading-tight"><%= company.employees %></p>
+                              <p class="text-[9px] font-medium text-gray-400 uppercase tracking-tighter">Employees</p>
+                            </div>
+                            <div class="px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl flex-1 flex flex-col justify-center shadow-sm">
+                              <p class="text-[11px] font-bold text-gray-800 leading-tight"><%= company.founded_year %></p>
+                              <p class="text-[9px] font-medium text-gray-400 uppercase tracking-tighter">Founded Year</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="flex gap-6 pt-4 border-t border-gray-50 items-stretch">
+                          <div class="flex-1 border border-gray-200 rounded-2xl relative overflow-hidden min-h-[160px] bg-gray-100">
+                            <img src="https://img.freepik.com/premium-vector/abstract-navigation-plan-urban-area-generic-city-map-with-signs-streets-roads-house-simple_753943-257.jpg" class="absolute inset-0 w-full h-full object-cover" alt="City Map">
+                            <div class="absolute inset-0 flex items-center justify-center p-4">
+                              <div class="bg-white p-4 rounded-xl shadow-lg border border-gray-100 flex flex-col items-center text-center max-w-[85%] relative z-10">
+                                <div class="bg-red-50 p-1.5 rounded-full mb-1">
+                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ef4444" class="w-5 h-5">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zM12 11.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                  </svg>
+                                </div>
+                                <p class="text-sm font-bold text-gray-900 uppercase tracking-wide"><%= company.city %></p>
+                                <p class="text-[11px] text-gray-600 font-semibold mt-1 leading-tight"><%= company.address rescue "Main St. 123, Central District" %></p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="flex flex-col flex-1 gap-3">
+                            <div class="p-4 border border-gray-300 rounded-xl bg-indigo-50/30 flex-1 flex flex-col justify-center">
+                              <h4 class="text-[9px] font-bold uppercase tracking-widest text-indigo-400 mb-1.5 flex items-center gap-1">
+                                <span class="h-1 w-1 bg-indigo-500 rounded-full"></span> AI Insight
+                              </h4>
+                              <p class="text-[11px] text-gray-700 leading-relaxed font-medium"><%= company.popup_bio %></p>
+                            </div>
+                            <a href="<%= company.website.present? ? (company.website.start_with?('http') ? company.website : "https://#{company.website}") : '#' %>" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between px-3 py-2 border border-gray-100 rounded-xl hover:bg-gray-100 transition-all bg-gray-50 group">
+                              <div class="flex flex-col">
+                                <span class="text-gray-600 text-[9px] font-bold truncate tracking-tight"><%= company.website.present? ? company.website.gsub(%r{\Ahttps?://}, '') : 'No website' %></span>
+                                <span class="text-[7px] font-bold text-gray-500 uppercase tracking-tighter">view official website</span>
+                              </div>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400 group-hover:text-gray-600 transition-colors"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </dialog>
                   <% end %>
                 </div>
               <% else %>
@@ -91,3 +175,7 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelectorAll("dialog").forEach(d => d.close()); });
+</script>

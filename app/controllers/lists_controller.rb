@@ -40,6 +40,20 @@ class ListsController < ApplicationController
       return
     end
 
+    if params[:name].present? && params[:company_id].present?
+      @list = current_user.lists.create!(name: params[:name])
+      @company = Company.find(params[:company_id])
+      @list.companies << @company unless @list.companies.exists?(@company.id)
+
+      @lists = current_user.lists.order(created_at: :desc)
+
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_back fallback_location: root_path, notice: "List \"#{@list.name}\" created and company added ✅" }
+      end
+      return
+    end
+
     if params[:company_name].present?
       list = current_user.lists.find_or_create_by!(name: "My List")
 
