@@ -2,15 +2,8 @@
   <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
 
     <div class="flex flex-1 items-center">
-      <%= link_to chat_path, class: "flex items-center gap-3" do %>
-        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-white font-bold">
-          ✦
-        </div>
-
-        <div class="leading-tight">
-          <div class="font-semibold text-gray-900">pluto.ai</div>
-          <div class="text-xs text-gray-500">Company Explorer</div>
-        </div>
+      <%= link_to chat_path, class: "flex items-center" do %>
+        <%= image_tag 'pluto-logo.svg', alt: 'pluto.ai', class: 'h-8' %>
       <% end %>
     </div>
 
