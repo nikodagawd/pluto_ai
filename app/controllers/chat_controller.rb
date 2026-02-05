@@ -1,6 +1,4 @@
 class ChatController < ApplicationController
-  before_action :authenticate_user!, only: [:create]
-
   def index
     @companies = []
     @is_recommendation = false
@@ -8,6 +6,11 @@ class ChatController < ApplicationController
   end
 
   def create
+    unless user_signed_in?
+      redirect_to new_user_session_path, alert: "Please sign in to send a message"
+      return
+    end
+
     @message = params[:message]
     search_result = search_companies(@message)
     @companies = search_result[:companies]
