@@ -305,10 +305,23 @@
     const input = document.getElementById('chatInput');
     const text = input.value.trim();
     if (!text) return;
-    const newSearch = { id: Date.now(), query: text, createdAt: new Date().toISOString(), isFavorite: false };
-    historyData.unshift(newSearch);
-    localStorage.setItem('user_chat_history', JSON.stringify(historyData));
-    renderHistory();
+
+    let currentHistory = JSON.parse(localStorage.getItem('user_chat_history')) || [];
+
+    const newSearch = {
+      id: Date.now(),
+      query: text,
+      createdAt: new Date().toISOString(),
+      isFavorite: false
+    };
+
+    currentHistory.unshift(newSearch);
+
+    if (currentHistory.length > 50) currentHistory.pop();
+
+    localStorage.setItem('user_chat_history', JSON.stringify(currentHistory));
+
+    historyData = currentHistory;
   }
 
   function toggleFavorite(id, event) {
@@ -387,7 +400,9 @@
     if (menu && !menu.contains(e.target) && !btn.contains(e.target)) menu.classList.add('hidden');
   });
 
-  document.getElementById('chatForm').addEventListener('submit', function() { saveSearchToHistory(); });
+ document.getElementById('chatForm').addEventListener('submit', function(e) {
+  saveSearchToHistory();
+});
 
   let visibleBatch = 10;
 
