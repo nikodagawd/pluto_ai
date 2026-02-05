@@ -87,6 +87,10 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
+  # Default URL options for URL helpers (wichtig für Stripe!)
+  config.action_mailer.default_url_options = { host: ENV.fetch("APPLICATION_HOST", "plutonian.lol") }
+  Rails.application.routes.default_url_options = { host: ENV.fetch("APPLICATION_HOST", "plutonian.lol") }
+
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
   #   "example.com",     # Allow requests from example.com
