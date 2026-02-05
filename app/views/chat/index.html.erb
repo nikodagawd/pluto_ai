@@ -287,7 +287,15 @@
 </style>
 
 <script>
-  let historyData = JSON.parse(localStorage.getItem('user_chat_history')) || [];
+
+  let historyData = [];
+  try {
+    const stored = localStorage.getItem('user_chat_history');
+    if (stored) historyData = JSON.parse(stored);
+  } catch (e) {
+    console.error("Historial corrupto, reseteando.");
+    localStorage.removeItem('user_chat_history');
+  }
 
   function getTimeAgo(dateString) {
     const now = new Date();
@@ -301,27 +309,33 @@
     return past.toLocaleDateString();
   }
 
+
   function saveSearchToHistory() {
     const input = document.getElementById('chatInput');
+    if (!input) return;
     const text = input.value.trim();
     if (!text) return;
 
-    let currentHistory = JSON.parse(localStorage.getItem('user_chat_history')) || [];
+    try {
 
-    const newSearch = {
-      id: Date.now(),
-      query: text,
-      createdAt: new Date().toISOString(),
-      isFavorite: false
-    };
+      let currentHistory = JSON.parse(localStorage.getItem('user_chat_history') || "[]");
 
-    currentHistory.unshift(newSearch);
+      const newSearch = {
+        id: Date.now(),
+        query: text,
+        createdAt: new Date().toISOString(),
+        isFavorite: false
+      };
 
-    if (currentHistory.length > 50) currentHistory.pop();
+      currentHistory.unshift(newSearch);
+      if (currentHistory.length > 50) currentHistory.pop();
 
-    localStorage.setItem('user_chat_history', JSON.stringify(currentHistory));
 
-    historyData = currentHistory;
+      localStorage.setItem('user_chat_history', JSON.stringify(currentHistory));
+      historyData = currentHistory;
+    } catch (e) {
+      console.error("Error al guardar:", e);
+    }
   }
 
   function toggleFavorite(id, event) {
@@ -345,29 +359,33 @@
   function renderHistory() {
     const container = document.getElementById('historyItemsContainer');
     if (!container) return;
+
     if (historyData.length === 0) {
       container.innerHTML = '<div class="p-6 text-center text-gray-400 text-[10px] italic font-bold">No search history yet.</div>';
       return;
     }
+
     const sortedData = [...historyData].sort((a, b) => {
       if (a.isFavorite && !b.isFavorite) return -1;
       if (!a.isFavorite && b.isFavorite) return 1;
       return b.id - a.id;
     });
+
     container.innerHTML = sortedData.map(item => {
       const displayText = item.query.length > 25 ? item.query.substring(0, 25) + '...' : item.query;
       const timeDisplay = getTimeAgo(item.createdAt || item.id);
       const starFill = item.isFavorite ? '#000' : 'none';
-      const starStroke = '#000';
+      const safeQuery = item.query.replace(/'/g, "\\'");
       const rowClass = item.isFavorite ? 'bg-yellow-200/50' : 'hover:bg-[#f5e6d3]';
+
       return `
       <div class="p-3 border-b-2 border-black cursor-pointer group flex justify-between items-center transition-colors ${rowClass}">
-        <div class="flex-1 min-w-0 mr-2" onclick="loadSearch('${item.query.replace(/'/g, "\\'")}')">
+        <div class="flex-1 min-w-0 mr-2" onclick="loadSearch('${safeQuery}')">
           <p class="text-[11px] font-black text-black truncate w-full uppercase tracking-tighter" title="${item.query}">${displayText}</p>
           <span class="text-[9px] text-gray-500 font-bold block">${timeDisplay}</span>
         </div>
         <button onclick="toggleFavorite(${item.id}, event)" class="flex-shrink-0 p-1.5 rounded-lg border-2 border-black bg-white hover:bg-yellow-400 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-[1px] active:translate-y-[1px]" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" stroke="${starStroke}" stroke-width="3" fill="${starFill}" stroke-linecap="round" stroke-linejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" stroke="#000" stroke-width="3" fill="${starFill}" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
           </svg>
         </button>
@@ -376,33 +394,44 @@
   }
 
   function loadSearch(text) {
-    document.getElementById('chatInput').value = text;
+    const input = document.getElementById('chatInput');
+    if(input) input.value = text;
     document.getElementById('savedSearchesMenu').classList.add('hidden');
   }
 
   function toggleSavedSearches() {
     const menu = document.getElementById('savedSearchesMenu');
     const btn = document.getElementById('savedSearchesBtn');
+    if(!menu) return;
     const isHidden = menu.classList.toggle('hidden');
-
     if (!isHidden) {
       renderHistory();
-
-      setTimeout(() => {
-        btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 50);
+      setTimeout(() => btn.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
     }
   }
 
-  document.addEventListener('click', (e) => {
-    const menu = document.getElementById('savedSearchesMenu');
-    const btn = document.getElementById('savedSearchesBtn');
-    if (menu && !menu.contains(e.target) && !btn.contains(e.target)) menu.classList.add('hidden');
+
+  document.addEventListener('DOMContentLoaded', function() {
+    renderHistory();
+
+
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('savedSearchesMenu');
+      const btn = document.getElementById('savedSearchesBtn');
+      if (menu && !menu.contains(e.target) && btn && !btn.contains(e.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+
+
+    const chatForm = document.getElementById('chatForm');
+    if (chatForm) {
+      chatForm.addEventListener('submit', function() {
+        saveSearchToHistory();
+      });
+    }
   });
 
- document.getElementById('chatForm').addEventListener('submit', function(e) {
-  saveSearchToHistory();
-});
 
   let visibleBatch = 10;
 
