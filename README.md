@@ -65,5 +65,8 @@ My Contribution
 
 <p align="center">
   <img src="./app/assets/images/about.png.png" width="45%" />
+</p>
+
+<p align="center">
   <img src="./app/assets/images/list.png.png" width="45%" />
 </p>
