@@ -13,7 +13,7 @@ Instead of filtering through complex forms, users can just ask:
 The system processes the request and returns relevant companies instantly.
 
 <p align="center">
-  <img src="./app/assets/images/home.png.png" width="45%" />
+  <img src="./app/assets/images/home.png.png" width="800" />
 </p>
 
 ---
@@ -63,4 +63,7 @@ My Contribution
 * Developed the "My Lists" page for managing saved companies
 * ontributed to UI/UX improvements for a smoother and more intuitive user experience
 
-
+<p align="center">
+  <img src="./app/assets/images/about.png.png" width="45%" />
+  <img src="./app/assets/images/list.png.png" width="45%" />
+</p>
