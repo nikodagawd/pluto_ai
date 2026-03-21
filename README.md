@@ -13,7 +13,7 @@ Instead of filtering through complex forms, users can just ask:
 The system processes the request and returns relevant companies instantly.
 
 <p align="center">
-  <img src="./app/assets/images/home.png" width="45%" />
+  <img src="./app/assets/images/home.png.png" width="45%" />
 </p>
 
 ---
